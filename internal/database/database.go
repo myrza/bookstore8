@@ -2,41 +2,33 @@ package server
 
 import (
 	"database/sql"
+	"fmt"
+
 	//"fmt"
 	"log"
 	"net/http"
 
-	//"os"
-
 	"github.com/myrza/bookstore8/internal/handlers"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-/*
-var (
-	database = os.Getenv("DB_DATABASE")
-	password = os.Getenv("DB_PASSWORD")
-	username = os.Getenv("DB_USERNAME")
-	port     = os.Getenv("DB_PORT")
-	host     = os.Getenv("DB_HOST")
-	schema   = os.Getenv("DB_SCHEMA")
-)
-*/
-// main function
 func DatabaseConnect() error {
-	//connect to database
-	//db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-	db, err := sql.Open("postgres", "postgres://postgres:postgres@db:5432/postgres?sslmode=disable")
+	envFile, _ := godotenv.Read(".env")
 
-	//connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", username, password, host, port, database, schema)
-	//log.Fatal(connStr)
-	//log.Println("Database^ ", database)
-	//db, err := sql.Open("postgres", connStr)
+	database := envFile["DB_DATABASE"]
+	password := envFile["DB_PASSWORD"]
+	username := envFile["DB_USERNAME"]
+	port := envFile["DB_PORT"]
+	host := envFile["DB_HOST"]
+
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, port, database)
+
+	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {
-		//log.Fatal(err)
 		return err
 	}
 	defer db.Close()
